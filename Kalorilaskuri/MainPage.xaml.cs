@@ -12,49 +12,29 @@ using System.Windows.Data;
 using System.Windows.Media;
 using Microsoft.WindowsAzure.MobileServices;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using System.Collections.ObjectModel;
+using Kalorilaskuri.Model;
+using Kalorilaskuri.ViewModel;
 
 namespace Kalorilaskuri
 {
-
+    /// <summary>
+    /// Includes all ui
+    /// </summary>
     public partial class MainPage : PhoneApplicationPage
     {
         /// <summary>
         /// Sisältää päivän yhteenlasketut kalorit
         /// </summary>
-        private int total = 0;
         private Item add;
-        private List<Item> hakutulokset;
+        //private List<Item> hakutulokset;
+        private DateTime selectedDate;
+        private Day SelectedDay;
 
         private MobileServiceCollectionView<Item> items;
+        private MobileServiceCollectionView<Item> search;
         private IMobileServiceTable<Item> itemTable = App.MobileService.GetTable<Item>();
-
-        /// <summary>
-        /// Sisältää päivän yhteenlasketut kalorit,
-        /// set-metodi päivittää labelin
-        /// </summary>
-        public int Total
-        {
-            get {return total;}
-            set { total = value;
-                  totalBlock.Text = total.ToString();
-            }
-        }
-
-        public Grid annaGridi()
-        {
-            Grid add = new Grid();
-            TextBlock testi = new TextBlock();
-            testi.Text = "TESTAAAA";
-            add.Children.Add(testi);
-            return add;
-        }
-
-        private void lisaaGrid()
-        {
-            PanoramaItem uus = new PanoramaItem();
-            uus.Content = annaGridi();
-            Panorama.Items.Add(uus);
-        }
 
         // Constructor
         public MainPage()
@@ -66,49 +46,61 @@ namespace Kalorilaskuri
             //BuildLocalizedApplicationBar();
         }
 
+        /// <summary>
+        /// Loads items from mobile service, sets datacontext for
+        /// adding new ingredients, selects today as default day in diary
+        /// and loads intakes of today if any
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
+            items = itemTable.ToCollectionView();
             add = new Item();
             GridAdd.DataContext = add;
-            lisaaGrid();
-            /**List<AlphaKeyGroup<Item>> DataSource = AlphaKeyGroup<Item>.CreateGroups(hakutulokset,
-                System.Threading.Thread.CurrentThread.CurrentUICulture,
-                (Item s) => { return s.Name; }, true);*/
-
             
-            //hakutulokset = App.MobileService.GetTable("Item");
+            //Get today as default
+            selectedDate = new DateTime();
+            selectedDate = DateTime.Today;
+            SelectedDay = new Day();
+            SelectedDay.Date = selectedDate;
+            SelectedDay = App.ViewModel.AddDay(SelectedDay);
+            if (SelectedDay.Intakes != null) LongListDiary.ItemsSource = SelectedDay.Intakes;
+            MessageBox.Show(SelectedDay.Date.ToString());
+            //ListPickerDiary.ItemsSource = App.ViewModel.DaysList;
         }
 
         /// <summary>
-        /// Lisää itemin pilveen, lopettaa prosessin poistamalla
-        /// progressbarin näkyvistä ja pyyhkii lisäysolion.
+        /// Inserts item to mobileservice table, removes
+        /// progressbar when finished and clears the new item
+        /// space from additem grid
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="item">Item to insert</param>
         private async void InsertItem(Item item)
         {
-            TextBlockHakusana.Text = item.Name;
             await App.MobileService.GetTable<Item>().InsertAsync(item);
             Progressbar.IsVisible = false;
 
-            //pitäisikö add-olio heittää jotenkin roskiin?
+            //the old add item goes to garbage automatically?
             add = new Item();
             GridAdd.DataContext = add;
             MessageBox.Show("Ruoka-aine lisätty!");
         }
 
         /// <summary>
-        /// Valitsee hakukentän tekstin sitä klikatessa
+        /// Chooses text when textbox is clicked
         /// </summary>
         /// <param name="sender">TextBoxHaku</param>
         /// <param name="e">fokuksen saanti</param>
-        private void TextBoxHaku_GotFocus(object sender, RoutedEventArgs e)
+        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            TextBoxHaku.Focus();
-            TextBoxHaku.SelectAll();
+            TextBox tb = (TextBox)sender;
+            tb.Focus();
+            tb.SelectAll();
         }
 
         /// <summary>
-        /// Laukeaa kun hakukentän teksti muuttuu
+        /// Fires when search-textbox textproperty is changed
         /// </summary>
         /// <param name="sender">hakukenttä</param>
         /// <param name="e">tekstin muuttuminen</param>
@@ -125,19 +117,23 @@ namespace Kalorilaskuri
         /// <param name="e"></param>
         private void TextBoxHaku_LostFocus(object sender, RoutedEventArgs e)
         {
-            
+            //TODO: progressbar should be visible until search is ready
         }
 
+        /// <summary>
+        /// Searches from mobileservice table for items containing
+        /// searchcriterias
+        /// </summary>
+        /// <param name="hakusana"></param>
         private void Haku(string hakusana)
         {
             
-            TextBlockHakusana.Text = hakusana;
+           TextBlockHakusana.Text = hakusana;
 
-           items = itemTable.Where(item => item.Name == hakusana)
+           search = itemTable.Where(item => item.Name.Contains(hakusana))
                .ToCollectionView();
 
-
-            ListHakutulokset.ItemsSource = items;
+            ListHakutulokset.ItemsSource = search;
 
             Progressbar.IsVisible = false;
             //hae hakusanalla molemmista kannoista ja lyö longlistselectoriin tms
@@ -149,7 +145,7 @@ namespace Kalorilaskuri
             Panorama.DefaultItem = Panorama.Items[1];
         }
 
-        private void ApplicationBarIconButton_Click_1(object sender, EventArgs e)
+        private void ApplicationBarSearchButton_Click(object sender, EventArgs e)
         {
             Panorama.DefaultItem = Panorama.Items[0];
             TextBoxHaku.Focus();
@@ -158,18 +154,21 @@ namespace Kalorilaskuri
         
 
         /// <summary>
-        /// Tässä on tarkoitus hakea heti käyttäjän kirjoitettua jotain
+        /// TODO: start searching immediately when user sets input,
+        /// not just say you do...
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void TextBoxHaku_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
+            Progressbar.Text = "Haetaan...";
+            Progressbar.IsVisible = true;
 
             if (e.Key == System.Windows.Input.Key.Enter)
             {
-                Progressbar.Text = "Haetaan...";
-                Progressbar.IsVisible = true;
-                hakutulokset = new List<Item>();
+                
+                //hakutulokset = new List<Item>();
+                
                 TextBox text = (TextBox)sender;
                 
                 this.Focus();
@@ -178,16 +177,22 @@ namespace Kalorilaskuri
         }
 
         /// <summary>
-        /// Testaa onko virheilmoituksia ja kutsuu sitten
-        /// lisäysmetodia
-        /// TODO: testaus, onko mitään lisätty
+        /// Test if there's errors and adds item to db
+        /// TODO: test if adding was a success
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            ListPickerItem selectedItem = (ListPickerItem)Portionpicker.SelectedItem;
+            string content = (string)selectedItem.Content;
+            add.countPortion();
+            
+            MessageBox.Show(add.PortionCalories.ToString());
+            add.Portion = content;
+
             if (!val || add.Name == null)
-                //TODO: tarkista onko nimi tyhjä
+                //TODO: tarkista onko nimi tyhjä ja laita täähän kieliasetukset ja parempi virheentarkistus(ainakin info)
                 MessageBox.Show("Lisäys ei onnistunut! Muistitko täyttää kaikki laatikot?");
 
             else {
@@ -204,6 +209,13 @@ namespace Kalorilaskuri
 
         private bool val = true;
 
+        /// <summary>
+        /// Käsittelee syötteentarkistusvirheen
+        /// TODO: tarkista sotiiko accent-värit jonkin teeman kanssa
+        /// + lisää tooltip tms
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Grid_BindingValidationError(object sender, ValidationErrorEventArgs e)
         {
             TextBox MyTextBox = (TextBox)e.OriginalSource;
@@ -219,6 +231,100 @@ namespace Kalorilaskuri
                 val = true;
             }
 
+        }
+
+        private void TextBoxNimi_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                this.Focus();
+            }
+        }
+
+        private void SearchResult_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+     
+        }
+
+        private void ListHakutulokset_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            
+        }
+
+        private void Expander_Expanded(object sender, RoutedEventArgs e)
+        {
+            ExpanderView ex = (ExpanderView)sender;
+            ex.Header = "-";
+        }
+
+        private void Expander_Collapsed(object sender, RoutedEventArgs e)
+        {
+            ExpanderView ex = (ExpanderView)sender;
+            ex.Header = "+";
+
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Painoit shittiä");
+
+            ///Etsitään item paikallisesta kannasta ja muodostetaan uusi jos sitä ei ole aiemmin lisätty
+            Item selectedItem = (Item)ListHakutulokset.SelectedItem;
+            Ingredient newIngredient = App.ViewModel.getIngredient(selectedItem.Id);
+            if (newIngredient != null) MessageBox.Show("Löytyi listasta: " + newIngredient.Name);
+            if (newIngredient == null)
+            {
+                newIngredient = new Ingredient();
+                newIngredient.ItemId = selectedItem.Id;
+                newIngredient.Name = selectedItem.Name;
+                newIngredient.Calories = selectedItem.Calories;
+                newIngredient.Fat = selectedItem.Fat;
+                newIngredient.Carbohydrates = selectedItem.Carbohydrates;
+                newIngredient.Protein = selectedItem.Protein;
+                newIngredient.Portion = selectedItem.Portion;
+                newIngredient.PortionCalories = selectedItem.PortionCalories;
+                newIngredient.Portionweight = selectedItem.Portionweight;
+                App.ViewModel.AddIngredient(newIngredient);
+            }
+
+            //Tehdään uusi intake
+            Intake newIntake = new Intake();
+            newIntake.Grams = 300;
+            newIntake.IngredientOfIntake = newIngredient;
+            MessageBox.Show("Intaken ingredientin nimi: " + newIntake.IngredientOfIntake.Name);
+            newIntake.DayIntake = SelectedDay;
+            
+            SelectedDay.Intakes.Add(newIntake);
+            newIngredient.Intakes.Add(newIntake);
+            
+            
+            App.ViewModel.AddIntake(newIntake);
+
+            LongListDiary.ItemsSource = SelectedDay.Intakes;
+            
+            //Lisätään intake kantaan
+            
+           /* newIntake._ingredientId = getIngredient.IngredientId;
+            newIntake._dayId = SelectedDay.Id;*/
+
+
+            //MessageBox.Show("Oisit ny lisäämässä" + newItem.Name);
+            
+        }
+
+
+        private void DiaryListSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            selectedDate = (DateTime)sender;
+            SelectedDay.Date = selectedDate;
+            SelectedDay = App.ViewModel.AddDay(SelectedDay);
+            
+                LongListDiary.ItemsSource = SelectedDay.Intakes;
+        }
+
+        private void ButtonAddIntake_Click(object sender, RoutedEventArgs e)
+        {
+            ApplicationBarSearchButton_Click(sender, e);
         }
 
 

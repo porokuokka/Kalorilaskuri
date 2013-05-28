@@ -61,6 +61,24 @@ namespace Kalorilaskuri.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add ingredient to diary.
+        /// </summary>
+        public static string AddIngredient {
+            get {
+                return ResourceManager.GetString("AddIngredient", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create new ingredient.
+        /// </summary>
+        public static string AddNew {
+            get {
+                return ResourceManager.GetString("AddNew", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to add.
         /// </summary>
         public static string AppBarButtonText {
@@ -79,11 +97,146 @@ namespace Kalorilaskuri.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Calorie counter.
+        ///   Looks up a localized string similar to CalorieCounter!.
         /// </summary>
         public static string ApplicationTitle {
             get {
                 return ResourceManager.GetString("ApplicationTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to kcal / portion.
+        /// </summary>
+        public static string CaloriesPerPortion {
+            get {
+                return ResourceManager.GetString("CaloriesPerPortion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Carbohydrates.
+        /// </summary>
+        public static string Carbohydrates {
+            get {
+                return ResourceManager.GetString("Carbohydrates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cut the nonsense, count them!.
+        /// </summary>
+        public static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Diary.
+        /// </summary>
+        public static string Diary {
+            get {
+                return ResourceManager.GetString("Diary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to dl.
+        /// </summary>
+        public static string Dl {
+            get {
+                return ResourceManager.GetString("Dl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fat.
+        /// </summary>
+        public static string Fat {
+            get {
+                return ResourceManager.GetString("Fat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fibre.
+        /// </summary>
+        public static string Fibre {
+            get {
+                return ResourceManager.GetString("Fibre", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to grams.
+        /// </summary>
+        public static string Grams {
+            get {
+                return ResourceManager.GetString("Grams", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 100 g includes.
+        /// </summary>
+        public static string Includes {
+            get {
+                return ResourceManager.GetString("Includes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ingredient.
+        /// </summary>
+        public static string Ingredient {
+            get {
+                return ResourceManager.GetString("Ingredient", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to jar.
+        /// </summary>
+        public static string Jar {
+            get {
+                return ResourceManager.GetString("Jar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to pcs.
+        /// </summary>
+        public static string Pcs {
+            get {
+                return ResourceManager.GetString("Pcs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Portion.
+        /// </summary>
+        public static string Portion {
+            get {
+                return ResourceManager.GetString("Portion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Protein.
+        /// </summary>
+        public static string Protein {
+            get {
+                return ResourceManager.GetString("Protein", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        public static string Ready {
+            get {
+                return ResourceManager.GetString("Ready", resourceCulture);
             }
         }
         
@@ -102,6 +255,60 @@ namespace Kalorilaskuri.Resources {
         public static string ResourceLanguage {
             get {
                 return ResourceManager.GetString("ResourceLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string Search {
+            get {
+                return ResourceManager.GetString("Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Write your search criteria here.
+        /// </summary>
+        public static string SearchTip {
+            get {
+                return ResourceManager.GetString("SearchTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Statistics.
+        /// </summary>
+        public static string Statistics {
+            get {
+                return ResourceManager.GetString("Statistics", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tbsp.
+        /// </summary>
+        public static string Tbsp {
+            get {
+                return ResourceManager.GetString("Tbsp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tsp.
+        /// </summary>
+        public static string Tsp {
+            get {
+                return ResourceManager.GetString("Tsp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to weights.
+        /// </summary>
+        public static string Weights {
+            get {
+                return ResourceManager.GetString("Weights", resourceCulture);
             }
         }
     }

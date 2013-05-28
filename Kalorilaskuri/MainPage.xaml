@@ -12,7 +12,9 @@
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="PortraitOrLandscape" Orientation="Portrait"
-    shell:SystemTray.IsVisible="True">
+    shell:SystemTray.IsVisible="True"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:attachedProperties="clr-namespace:DotNetChannel.Silverlight.AttachedProperties.AutoSelectText">
 
     <shell:SystemTray.ProgressIndicator>
         <shell:ProgressIndicator x:Name="Progressbar" IsIndeterminate="true" IsVisible="False" Text="" />
@@ -20,125 +22,222 @@
     <phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True" Mode="Default" Opacity="1.0" >
             <shell:ApplicationBarIconButton IconUri="/Images/add.png" Text="lisää" Click="ApplicationBarIconButton_Click" />
-            <shell:ApplicationBarIconButton IconUri="/Images/feature.search.png" Text="hae" Click="ApplicationBarIconButton_Click_1" />
+            <shell:ApplicationBarIconButton IconUri="/Images/feature.search.png" Text="hae" Click="ApplicationBarSearchButton_Click" />
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>
+
+
     <!--LayoutRoot is the root grid where all page content is placed-->
-    <Grid x:Name="LayoutRoot" Background="Transparent">
+    <Grid x:Name="LayoutRoot" attachedProperties:AttachedProperties.AutoSelectText="true">
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="1, 1.1" StartPoint="1, 0.3">
+                <GradientStop Color="{StaticResource PhoneBackgroundColor}" Offset="0.4" />
+                <GradientStop Color="{StaticResource PhoneAccentColor}" Offset="1.4" />
+                <!-- <GradientStop Color="#FF035159" Offset="0.5" />-->
+                <GradientStop Color="{StaticResource PhoneBackgroundColor}" Offset="0.1" />
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Grid.Resources>
+            <DataTemplate x:Key="PanoramaHeaderTemplate">
+                <Grid>
+                    <ContentPresenter Margin="-9,-33,9,33">
+                        <TextBlock Text="{Binding}" FontSize="40" Margin="15, 25, 0, 0" Foreground="{StaticResource PhoneAccentBrush}" />
+                    </ContentPresenter>
+                </Grid>
+            </DataTemplate>
+
+            <DataTemplate x:Key="CustomHeaderTemplate">
+                <TextBlock ></TextBlock>
+            </DataTemplate>
+        </Grid.Resources>
+
+
+
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" MinHeight="72"/>
-            <RowDefinition/>
+            <RowDefinition Height="100" MinHeight="100"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <!-- LOCALIZATION NOTE:
-            To localize the displayed strings copy their values to appropriately named
-            keys in the app's neutral language resource file (AppResources.resx) then
-            replace the hard-coded text value between the attributes' quotation marks
-            with the binding clause whose path points to that string name.
-
-            For example:
-
-                Text="{Binding Path=LocalizedResources.ApplicationTitle, Source={StaticResource LocalizedStrings}}"
-
-            This binding points to the template's string resource named "ApplicationTitle".
-
-            Adding supported languages in the Project Properties tab will create a
-            new resx file per language that can carry the translated values of your
-            UI strings. The binding in these examples will cause the value of the
-            attributes to be drawn from the .resx file that matches the
-            CurrentUICulture of the app at run time.
-         -->
 
         <!--TitlePanel contains the name of the application and page title-->
-        <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,28">
-            <TextBlock Text="{Binding Path=LocalizedResources.ApplicationTitle, Source={StaticResource LocalizedStrings}}" Style="{StaticResource PhoneTextNormalStyle}" Margin="12,0"/>
-
+        <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="0,0,0,551" Grid.RowSpan="2">
+            <StackPanel.Background>
+                <LinearGradientBrush EndPoint="1, 0.3" StartPoint="1, 1">
+                    <GradientStop Color="{StaticResource PhoneBackgroundColor}" Offset="0.1" />
+                    <GradientStop Color="{StaticResource PhoneAccentColor}" Offset="1.2" />
+                    <!-- <GradientStop Color="#FF035159" Offset="0.5" />-->
+                    <GradientStop Color="{StaticResource PhoneBackgroundColor}" Offset="0.1" />
+                </LinearGradientBrush>
+            </StackPanel.Background>
+            <TextBlock Text="{Binding LocalizedResources.ApplicationTitle, Source={StaticResource LocalizedStrings}}" FontSize="40" Foreground="{StaticResource PhoneForegroundBrush}" FontWeight="Light"  Margin="0,0,-125,0" Height="50" HorizontalAlignment="Right" Width="575"/>
         </StackPanel>
 
-        <!--ContentPanel - place additional content here-->
-        <TextBlock HorizontalAlignment="Stretch" Margin="295,15,147,0" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.166,0.663" Width="38" Height="26">
-        	<Run Text="Yht:"/>
-        	<LineBreak/>
-        	<Run/>
-        </TextBlock>
-        <TextBlock x:Name="totalBlock" Text="0"  HorizontalAlignment="Stretch" Margin="340,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="26" Width="100"/>
-        <phone:Panorama x:Name="Panorama" HorizontalAlignment="Left" Margin="5,50,0,-47" Title="" VerticalAlignment="Top" Grid.RowSpan="2">
-            <phone:PanoramaItem CacheMode="{x:Null}" ScrollViewer.VerticalScrollBarVisibility="Hidden"  Header="Hae" Height="Auto" x:Name="Hae" Width="420">
+
+        <phone:Panorama x:Name="Panorama" HorizontalAlignment="Left" Margin="0,80,0,-89" Title="" VerticalAlignment="Top" Height="705" Width="450" Grid.RowSpan="2">
+            <!--Haku-->
+            <phone:PanoramaItem CacheMode="{x:Null}" ScrollViewer.VerticalScrollBarVisibility="Hidden"  Header="{Binding LocalizedResources.Search, Source={StaticResource LocalizedStrings}}" Height="755" x:Name="Hae" Width="426" HeaderTemplate="{StaticResource PanoramaHeaderTemplate}">
                 <phone:PanoramaItem.RenderTransform>
                     <TranslateTransform/>
                 </phone:PanoramaItem.RenderTransform>
-                <Grid>
-                    <TextBox x:Name="TextBoxHaku" HorizontalAlignment="Left" Height="76" TextWrapping="Wrap" Text="Kirjoita hakusana tähän..." TextChanged="TextBoxHaku_TextChanged" GotFocus="TextBoxHaku_GotFocus" LostFocus="TextBoxHaku_LostFocus" VerticalAlignment="Bottom" Width="415" Margin="-2,0,0,487" KeyDown="TextBoxHaku_KeyDown"/>
-                    <TextBlock x:Name="TextBlockHakusana" HorizontalAlignment="Left" Margin="13,104,0,0" TextWrapping="Wrap" Text="..." VerticalAlignment="Top" RenderTransformOrigin="0.488,0.444" Width="380"/>
-                    <ScrollViewer>
-                    <phone:LongListSelector x:Name="ListHakutulokset" Margin="0,146,0,0" IsGroupingEnabled="false"
-  HideEmptyGroups ="false" />
+                <Grid Grid.Row="1">
+                    <TextBox x:Name="TextBoxHaku" HorizontalAlignment="Left" Height="71" TextWrapping="Wrap" Text="{Binding LocalizedResources.SearchTip, Source={StaticResource LocalizedStrings}}" TextChanged="TextBoxHaku_TextChanged" LostFocus="TextBoxHaku_LostFocus" VerticalAlignment="Bottom" Width="380" Margin="8,-25,0,594" KeyDown="TextBoxHaku_KeyDown"/>
+                    <TextBlock x:Name="TextBlockHakusana" HorizontalAlignment="Left" Margin="8,40,0,0" TextWrapping="Wrap" Text="..." VerticalAlignment="Top" RenderTransformOrigin="0.488,0.444" Width="380"/>
+                    <ScrollViewer Margin="20,80,44, 140" Width="350" Height="auto">
+                        <phone:LongListSelector x:Name="ListHakutulokset" IsGroupingEnabled="false" HideEmptyGroups ="false" Height="auto" Width="350" KeyDown="ListHakutulokset_KeyDown">
+                            <phone:LongListSelector.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="{StaticResource PhoneAccentBrush}" CornerRadius="5,5,5,5" BorderThickness="2,2,2,2" Margin="5, 5, 5, 5">
+                                        <StackPanel x:Name="SearchResult" Background="{StaticResource PhoneAccentBrush}" KeyDown="SearchResult_KeyDown">
+                                            <TextBlock Text="{Binding Name}" Margin="5,5,5,0" TextWrapping="Wrap" FontWeight="Bold"/>
+                                            <toolkit:ExpanderView x:Name="AddItemExpander" Collapsed="Expander_Collapsed" Expanded="Expander_Expanded" Margin="5,5,5,5" Header="+" FontSize="50">
+                                                <toolkit:ExpanderView.Items>
+
+                                                    <TextBlock Text="{Binding LocalizedResources.Includes, Source={StaticResource LocalizedStrings}}" TextWrapping="Wrap" FontSize="20"/>
+
+                                                    <TextBlock x:Name="ShowCalories" Margin="5,5,5,5" TextWrapping="Wrap" FontSize="20">
+                                                        <Run Text="{Binding Calories}" />
+                                                        <Run Text="kcal" />
+                                                    </TextBlock>
+
+                                                    <TextBlock x:Name="ShowCarbohydrates" Margin="5,5,5,5" TextWrapping="Wrap" FontSize="20">
+                                                        <Run Text="{Binding Carbohydrates}" />
+                                                        <Run Text="{Binding LocalizedResources.Carbohydrates, Source={StaticResource LocalizedStrings}}" />
+                                                    </TextBlock>
+
+                                                    <TextBlock x:Name="ShowFat" Margin="5,5,5,5" TextWrapping="Wrap" FontSize="20">
+                                                        <Run Text="{Binding Fat}" />
+                                                        <Run Text="{Binding LocalizedResources.Fat, Source={StaticResource LocalizedStrings}}" />
+                                                    </TextBlock>
+
+                                                    <TextBlock x:Name="ShowProtein" Margin="5,5,5,5" TextWrapping="Wrap" FontSize="20">
+                                                        <Run Text="{Binding Protein}" />
+                                                        <Run Text="{Binding LocalizedResources.Protein, Source={StaticResource LocalizedStrings}}" />
+                                                    </TextBlock>
+
+                                                    <TextBlock Margin="5,5,5,5" TextWrapping="Wrap" FontSize="20">
+                                                <Run Text="{Binding PortionCalories}" />
+                                                <Run Text=" kcal / "/>
+                                                <Run Text="{Binding Portion}" />
+                                                    </TextBlock>
+                                                    <Button Content="Add shit" Click="Button_Click_1" />
+
+                                                </toolkit:ExpanderView.Items>
+                                            </toolkit:ExpanderView>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </phone:LongListSelector.ItemTemplate>
+                        </phone:LongListSelector>
                     </ScrollViewer>
                 </Grid>
 
             </phone:PanoramaItem>
 
-            <phone:PanoramaItem CacheMode="{x:Null}" Header="Lisää uusi" Width="445" Height="720">
+            <!--Luo raaka-aine-->
+            <phone:PanoramaItem Foreground="{StaticResource PhoneForegroundBrush}" CacheMode="{x:Null}" Header="{Binding LocalizedResources.AddNew, Source={StaticResource LocalizedStrings}}" Width="630" Height="765" HeaderTemplate="{StaticResource PanoramaHeaderTemplate}">
                 <phone:PanoramaItem.RenderTransform>
                     <TranslateTransform/>
                 </phone:PanoramaItem.RenderTransform>
-                <ScrollViewer Margin="2,-1,-2,1">
-                    <Grid x:Name="GridAdd" BindingValidationError="Grid_BindingValidationError" Height="1352">
+                <ScrollViewer Margin="-10,-25,-2, 150">
+                    <Grid x:Name="GridAdd" BindingValidationError="Grid_BindingValidationError" Height="1415" Width="547">
                         <Grid.Resources>
-                            <local:Item x:Name="Nmbr" />
+                            <!--<local:Item x:Name="Nmbr" />-->
                             <!--Style for a number only textbox-->
                             <Style x:Key="NumberTextBox" TargetType="TextBox">
                                 <Setter Property="InputScope" Value="Number" />
                             </Style>
                         </Grid.Resources>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
 
-                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Ruoka-aineen nimi" VerticalAlignment="Top" Height="26" Margin="28,-4,0,0" Width="180"/>
-                        <TextBox x:Name="TextBoxNimi" Text="{Binding Name, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" InputScope="Text" HorizontalAlignment="Left" GotFocus="TextBoxNimi_GotFocus" Height="72" TextWrapping="Wrap" VerticalAlignment="Top" Width="415" Margin="18,9,0,0"/>
-                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="100 grammaa tuotetta sisältää:" VerticalAlignment="Top" RenderTransformOrigin="0.512,1.111" Margin="60,74,0,0"/>
+                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding LocalizedResources.Ingredient, Source={StaticResource LocalizedStrings}}" VerticalAlignment="Top" Height="25" Margin="1,-5,0,0" Width="180" Grid.ColumnSpan="2"/>
+                        <TextBox x:Name="TextBoxNimi" Text="{Binding Name, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" KeyDown="TextBoxNimi_KeyDown"  InputScope="Text" HorizontalAlignment="Left" GotFocus="TextBoxNimi_GotFocus" Height="72" TextWrapping="Wrap" VerticalAlignment="Top" Width="415" Margin="-9,20,0,0" Grid.ColumnSpan="2"/>
+                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding LocalizedResources.Includes, Source={StaticResource LocalizedStrings}}" VerticalAlignment="Top" RenderTransformOrigin="0.512,1.111" Margin="6,90,0,0" Grid.ColumnSpan="2"/>
 
-                        <TextBox x:Name="TextBoxProtein" Text="{Binding Protein, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" Style="{StaticResource NumberTextBox}"  HorizontalAlignment="Left" Height="72" TextWrapping="Wrap" VerticalAlignment="Top" Width="210" RenderTransformOrigin="0.465,2.653" Margin="48,91,0,0" />
-                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Proteiinia" VerticalAlignment="Top" RenderTransformOrigin="3.573,6.148" Margin="266,113,0,0"/>
+                        <TextBox x:Name="TextBoxProtein" Text="{Binding Protein, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" Style="{StaticResource NumberTextBox}"  HorizontalAlignment="Left" Height="72" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" RenderTransformOrigin="0.465,2.653" Margin="11,115,0,0" Grid.ColumnSpan="2" />
+                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding LocalizedResources.Protein, Source={StaticResource LocalizedStrings}}" VerticalAlignment="Top" RenderTransformOrigin="3.573,6.148" Margin="131,143,0,0" Grid.ColumnSpan="2"/>
 
-                        <TextBox x:Name="TextBoxCarbohydrates" Text="{Binding Carbohydrates, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" Style="{StaticResource NumberTextBox}" HorizontalAlignment="Left" Height="72" TextWrapping="Wrap" VerticalAlignment="Top" Width="210" RenderTransformOrigin="0.465,2.653" Margin="48,149,0,0"/>
-                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Hiilihydraatteja" VerticalAlignment="Top" RenderTransformOrigin="3.573,6.148" Margin="267,176,0,0"/>
+                        <TextBox x:Name="TextBoxCarbohydrates" Text="{Binding Carbohydrates, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" Style="{StaticResource NumberTextBox}" HorizontalAlignment="Left" Height="72" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" RenderTransformOrigin="0.465,2.653" Margin="11,178,0,0" Grid.ColumnSpan="2"/>
+                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding LocalizedResources.Carbohydrates, Source={StaticResource LocalizedStrings}}" VerticalAlignment="Top" RenderTransformOrigin="3.573,6.148" Margin="131,203,0,0" Grid.ColumnSpan="2"/>
 
-                        <TextBox x:Name="TextBoxFat" Text="{Binding Fat, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" Style="{StaticResource NumberTextBox}" HorizontalAlignment="Left" Height="72" TextWrapping="Wrap"  VerticalAlignment="Top" Width="210" RenderTransformOrigin="0.465,2.653" Margin="48,206,0,0"/>
-                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Rasvaa" VerticalAlignment="Top" RenderTransformOrigin="3.573,6.148" Margin="269,233,0,0"/>
+                        <TextBox x:Name="TextBoxFat" Text="{Binding Fat, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" Style="{StaticResource NumberTextBox}" HorizontalAlignment="Left" Height="72" TextWrapping="Wrap"  VerticalAlignment="Top" Width="100" RenderTransformOrigin="0.465,2.653" Margin="11,245,0,0" Grid.ColumnSpan="2"/>
+                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding LocalizedResources.Fat, Source={StaticResource LocalizedStrings}}" VerticalAlignment="Top" RenderTransformOrigin="3.573,6.148" Margin="131,265,0,0" Grid.ColumnSpan="2"/>
 
-                        <TextBox x:Name="TextBoxFibre" Text="{Binding Fibre, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" Style="{StaticResource NumberTextBox}" HorizontalAlignment="Left" Height="72" TextWrapping="Wrap" VerticalAlignment="Top" Width="210" RenderTransformOrigin="0.465,2.653" Margin="48,266,0,0"/>
-                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Kuitua" VerticalAlignment="Top" RenderTransformOrigin="3.573,6.148" Margin="268,291,0,0"/>
+                        <TextBox x:Name="TextBoxFibre" Text="{Binding Fibre, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" Style="{StaticResource NumberTextBox}" HorizontalAlignment="Left" Height="72" TextWrapping="Wrap" VerticalAlignment="Top" Width="105" RenderTransformOrigin="0.465,2.653" Margin="11,315,0,0" Grid.ColumnSpan="2"/>
+                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding LocalizedResources.Fibre, Source={StaticResource LocalizedStrings}}" VerticalAlignment="Top" RenderTransformOrigin="3.573,6.148" Margin="131,340,0,0" Grid.ColumnSpan="2"/>
 
-                        <Button Content="Valmis" HorizontalAlignment="Left" Margin="163,596,0,-22" VerticalAlignment="Top" Click="Button_Click" RenderTransformOrigin="0.505,0.486" Height="75" Width="135"/>
+                        <Button Content="{Binding LocalizedResources.Ready, Source={StaticResource LocalizedStrings}}" HorizontalAlignment="Left" Margin="163,596,0,0" VerticalAlignment="Top" Click="Button_Click" RenderTransformOrigin="0.505,0.486" Height="75" Width="auto" Grid.ColumnSpan="2"/>
 
-                        <TextBox x:Name="TextBoxCalories" Text="{Binding Calories, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" Style="{StaticResource NumberTextBox}" HorizontalAlignment="Left" Height="72" TextWrapping="Wrap" VerticalAlignment="Top" Width="210" RenderTransformOrigin="0.465,2.653" Margin="48,324,0,0"/>
-                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Kcal" VerticalAlignment="Top" RenderTransformOrigin="3.573,6.148" Margin="268,349,0,0"/>
-                        <TextBox x:Name="TextBoxDl" Text="{Binding Dl, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" Style="{StaticResource NumberTextBox}" HorizontalAlignment="Left" Height="72" TextWrapping="Wrap" VerticalAlignment="Top" Width="210" RenderTransformOrigin="0.465,2.653" Margin="48,495,0,0"/>
-                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="grammaa" VerticalAlignment="Top" RenderTransformOrigin="3.573,6.148" Margin="268,512,0,0"/>
-                        <TextBlock HorizontalAlignment="Left" Margin="23,397,0,0" TextWrapping="Wrap" VerticalAlignment="Top">
-                    	<Run Text="Annoskoko: "/>
-                    	<LineBreak/>
-                    	<Run/>
-                        </TextBlock>
+                        <TextBox x:Name="TextBoxCalories" Text="{Binding Calories, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" Style="{StaticResource NumberTextBox}" HorizontalAlignment="Left" Height="72" TextWrapping="Wrap" VerticalAlignment="Top" Width="90" RenderTransformOrigin="0.465,2.653" Margin="221,316,0,0" Grid.ColumnSpan="2"/>
+                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Kcal" VerticalAlignment="Top" RenderTransformOrigin="3.573,6.148" Margin="311,345,0,0" Grid.ColumnSpan="2"/>
+                        <TextBox x:Name="TextBoxPortion" Text="{Binding Portionweight, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" Style="{StaticResource NumberTextBox}" HorizontalAlignment="Left" Height="72" TextWrapping="Wrap" VerticalAlignment="Top" Width="150" RenderTransformOrigin="0.465,2.653" Margin="121,498,0,0" Grid.ColumnSpan="2"/>
+                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding LocalizedResources.Grams, Source={StaticResource LocalizedStrings}}" VerticalAlignment="Top" RenderTransformOrigin="3.573,6.148" Margin="296,508,0,0" Grid.ColumnSpan="2"/>
+                        <TextBlock HorizontalAlignment="Left" Margin="23,397,0,0" Text="{Binding LocalizedResources.Portion, Source={StaticResource LocalizedStrings}}" TextWrapping="Wrap" VerticalAlignment="Top" Grid.ColumnSpan="2" />
+                        <TextBlock HorizontalAlignment="Left" Margin="26,477,0,0" TextWrapping="Wrap" Text="{Binding LocalizedResources.Weights, Source={StaticResource LocalizedStrings}}" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
 
-                        <RadioButton Content="dl" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="1.311,5.639" Margin="41,417,0,0" Height="70" Width="128"/>
-                        <RadioButton Content="prk" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="1.311,5.639" Margin="133,417,0,0" Height="70" Width="108"/>
-                        <RadioButton Content="rkl" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="1.311,5.639" Margin="236,417,0,0" Height="70" Width="108"/>
-                        <RadioButton Content="tl" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="1.311,5.639" Margin="331,417,-6,0" Height="70" Width="108"/>
-                        <TextBlock HorizontalAlignment="Left" Margin="26,477,0,0" TextWrapping="Wrap" Text="painaa: " VerticalAlignment="Top"/>
+                        <toolkit:ListPicker x:Name="Portionpicker" SelectionMode="Single" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="131,415,0,0" VerticalAlignment="Top" Width="131">
+                            <toolkit:ListPickerItem Content="{Binding LocalizedResources.Dl, Source={StaticResource LocalizedStrings}}" HorizontalAlignment="Left" Width="125" />
+                            <toolkit:ListPickerItem Content="{Binding LocalizedResources.Tsp, Source={StaticResource LocalizedStrings}}" HorizontalAlignment="Left" Width="125" />
+                            <toolkit:ListPickerItem Content="{Binding LocalizedResources.Tbsp, Source={StaticResource LocalizedStrings}}" HorizontalAlignment="Left" Width="125" />
+                            <toolkit:ListPickerItem Content="{Binding LocalizedResources.Pcs, Source={StaticResource LocalizedStrings}}" HorizontalAlignment="Left" Width="125" />
+                            <toolkit:ListPickerItem Content="{Binding LocalizedResources.Jar, Source={StaticResource LocalizedStrings}}" HorizontalAlignment="Left" Width="125" />
+                        </toolkit:ListPicker>
 
                     </Grid>
                 </ScrollViewer>
+
             </phone:PanoramaItem>
 
-            <phone:PanoramaItem CacheMode="{x:Null}" Header="Päiväkirja">
+            <!--Päiväkirja-->
+            <phone:PanoramaItem CacheMode="{x:Null}" Header="{Binding LocalizedResources.Diary, Source={StaticResource LocalizedStrings}}" Height="722" Width="415" HeaderTemplate="{StaticResource PanoramaHeaderTemplate}">
                 <phone:PanoramaItem.RenderTransform>
                     <TranslateTransform/>
                 </phone:PanoramaItem.RenderTransform>
-                <!--<Grid>
-                    <phone:LongListSelector HorizontalAlignment="Left" Height="595" Margin="3,1,0,0" VerticalAlignment="Top" Width="410"/>
+                <Grid Margin="0,-62,0,106">
+                    <toolkit:DatePicker x:Name="DatePickerDiary" HorizontalAlignment="Left" Height="73" VerticalAlignment="Top" Width="163" Margin="0,10,0,0"/>
+                    <TextBlock x:Name="TotalIntake" Text="{Binding Path=SelectedDay.Total}" Margin="270,10,0,0" TextWrapping="Wrap" FontSize="30" TextAlignment="Right" VerticalAlignment="Top" HorizontalAlignment="Left" Width="101" RenderTransformOrigin="2.19,0.37" Height="48"/>
 
-                </Grid>-->
+                    <ScrollViewer>
+                        <phone:LongListSelector
+                        x:Name="LongListDiary" HorizontalAlignment="Left" Height="449" Margin="10,104,0,0" VerticalAlignment="Top" Width="383">
+                            <phone:LongListSelector.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="{StaticResource PhoneAccentBrush}" CornerRadius="5,5,5,5" BorderThickness="2,2,2,2" Margin="5, 5, 5, 5">
+                                        <StackPanel x:Name="StackPanelIntake" Background="{StaticResource PhoneAccentBrush}">
+                                            <TextBlock Text="{Binding Path = IngredientOfIntake.Name}" Margin="5,5,5,0" TextWrapping="Wrap" FontWeight="Bold"/>
+                                            <toolkit:ExpanderView x:Name="ViewIntakeExpander" Margin="5,5,5,5" Header="+" FontSize="50">
+                                                <toolkit:ExpanderView.Items>
+
+                                                    <TextBlock Text="{Binding LocalizedResources.Includes, Source={StaticResource LocalizedStrings}}" TextWrapping="Wrap" FontSize="20"/>
+
+                                                    <TextBlock x:Name="ShowCalories" Margin="5,5,5,5" TextWrapping="Wrap" FontSize="20">
+                                                        <Run Text="{Binding Calories}" />
+                                                        <Run Text="kcal" />
+                                                    </TextBlock>
+
+                                                    <TextBlock x:Name="ShowGrams" Margin="5,5,5,5" TextWrapping="Wrap" FontSize="20">
+                                                        <Run Text="{Binding Grams}" />
+                                                        <Run Text=" g" />
+                                                    </TextBlock>
+
+                                                    <TextBlock Margin="5,5,5,5" TextWrapping="Wrap" FontSize="20">
+                                                <Run Text="{Binding Path = IngredientOfIntake.Calories}" />
+                                                <Run Text=" kcal / 100g"/>
+
+                                                    </TextBlock>
+                                                </toolkit:ExpanderView.Items>
+                                            </toolkit:ExpanderView>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </phone:LongListSelector.ItemTemplate>
+                        </phone:LongListSelector>
+                    </ScrollViewer>
+                </Grid>
+                <!--Taulukot-->
             </phone:PanoramaItem>
-            <phone:PanoramaItem CacheMode="{x:Null}" Header="Taulukot">
+            <phone:PanoramaItem CacheMode="{x:Null}" Header="{Binding LocalizedResources.Statistics, Source={StaticResource LocalizedStrings}}" HeaderTemplate="{StaticResource PanoramaHeaderTemplate}" Width="385">
                 <phone:PanoramaItem.RenderTransform>
                     <TranslateTransform/>
                 </phone:PanoramaItem.RenderTransform>

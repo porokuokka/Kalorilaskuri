@@ -9,6 +9,8 @@ using Microsoft.Phone.Shell;
 using Kalorilaskuri.Resources;
 using Microsoft.WindowsAzure.MobileServices;
 using Newtonsoft.Json;
+using Kalorilaskuri.Model;
+using Kalorilaskuri.ViewModel;
 
 namespace Kalorilaskuri
 {
@@ -24,6 +26,13 @@ namespace Kalorilaskuri
         /// </summary>
         /// <returns>The root frame of the Phone Application.</returns>
         public static PhoneApplicationFrame RootFrame { get; private set; }
+
+        
+        private static CalorieCounterViewModel viewModel;
+        public static CalorieCounterViewModel ViewModel
+        {
+            get { return viewModel; }
+        }
 
         /// <summary>
         /// Constructor for the Application object.
@@ -62,6 +71,32 @@ namespace Kalorilaskuri
                 PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
             }
 
+            // Specify the local database connection string.
+            string DBConnectionString = "Data Source=isostore:/CalorieCounter.sdf";
+            
+
+            // Create the database if it does not exist.
+            using (CalorieCounterDataContext db = new CalorieCounterDataContext(DBConnectionString))
+            {
+                if (db.DatabaseExists() == false)
+                {
+                    // Create the local database.
+                    db.CreateDatabase();
+
+                    // Prepopulate the categories.
+                    db.Days.InsertOnSubmit(new Day { Date = DateTime.Today });
+
+                    // Save categories to the database.
+                    db.SubmitChanges();
+                }
+            }
+
+            // Create the ViewModel object.
+            viewModel = new CalorieCounterViewModel(DBConnectionString);
+
+            // Query the local database and load observable collections.
+            viewModel.LoadCollectionsFromDatabase(); 
+            
         }
 
         // Code to execute when the application is launching (eg, from Start)

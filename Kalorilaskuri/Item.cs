@@ -10,12 +10,11 @@ using System.Windows.Controls;
 namespace Kalorilaskuri
 {
     /// <summary>
-    /// Edustaa sataa grammaa tiettyä ainetta tai ateriaa
-    /// TODO: user-muuttuja
+    /// Represents 100g of some ingredient containing nutritional
+    /// information and portions and portions calories
     /// </summary>
     public class Item : INotifyPropertyChanged
     {
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void NotifyPropertyChanged(string propertyName)
@@ -33,7 +32,6 @@ namespace Kalorilaskuri
         
         private float protein;
 
-        [JsonProperty(PropertyName = "protein")]
         public float Protein
         {
             get { return protein; }
@@ -97,22 +95,6 @@ namespace Kalorilaskuri
             }
         }
 
-        private float dl;
-        public float Dl
-        {
-            get { return dl; }
-            set
-            {
-                if (value < 0)
-                {
-                    throw new Exception("Amount must be greater than zero.");
-                }
-
-                dl = value;
-                NotifyPropertyChanged("Dl");
-            }
-        }
-
         private int calories;
         public int Calories
         {
@@ -130,6 +112,23 @@ namespace Kalorilaskuri
             }
         }
 
+        private float portionCalories;
+        public float PortionCalories
+        {
+            get { return portionCalories; }
+
+            set
+            {
+                if (value < 0)
+                {
+                    throw new Exception("Amount must be greater than zero.");
+                }
+
+                portionCalories = value;
+                NotifyPropertyChanged("PortionCalories");
+            }
+        }
+
         private string name;
         public string Name
         {
@@ -137,8 +136,9 @@ namespace Kalorilaskuri
             set
             {
                 String help = (String)value;
-                if (help == String.Empty)
+                if (help == String.Empty || value == null)
                 {
+                    value = "";
                     throw new Exception("Name must contain some letters");
                 }
 
@@ -146,11 +146,47 @@ namespace Kalorilaskuri
                 NotifyPropertyChanged("Name");
             }
         }
+
+        private string portion;
+        public string Portion
+        {
+            get { return portion; }
+            set
+            {
+                String help = (String)value;
+                if (help == String.Empty || value == null)
+                {
+                    value = "";
+                    throw new Exception("Portion value is empty");
+                }
+
+                portion = value;
+                NotifyPropertyChanged("Portion");
+            }
+        }
+
+        private int portionweight;
+        public int Portionweight
+        {
+            get { return portionweight; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new Exception("Amount must be greater than zero.");
+                }
+
+                portionweight = value;
+
+                NotifyPropertyChanged("Portionweight");
+            }
+        }
+
+        
         #endregion
 
-
         public Item() { }
-        public Item(string name, int calories, float protein, float carbohydrates, float fat, float fibre, double dl)
+        public Item(string name, int calories, float protein, float carbohydrates, float fat, float fibre)
         {
             Name = name;
             Calories = calories;
@@ -160,20 +196,20 @@ namespace Kalorilaskuri
             Fibre = fibre;
         }
 
-
-        public Grid getAddGrid()
-        {
-            Grid add = new Grid();
-
-            TextBox TextBoxname = new TextBox();
-            
-            
-            return add;
-        }
-
         public override string ToString()
         {
-            return name + "100g cont. kcal:" + Calories + "prot:" + Protein + " carb:" + Carbohydrates + " fat:" + Fat + " fibre" + Fibre + " dl/g:" + Dl;
+            return name + " /n" + calories + " kcal/100g";
+        }
+
+        /// <summary>
+        /// Counts calories per portion (float) and changes
+        /// the property
+        /// </summary>
+        public void countPortion()
+        {
+            float hundred = 100;
+            float helpcalories = (float)Calories;
+            PortionCalories = (helpcalories / hundred) * Portionweight;
         }
     }
 }

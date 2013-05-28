@@ -126,12 +126,84 @@
     <comment>Controls the Language and ensures that the font for all elements in the RootFrame aligns with the app's language. Set to the language code of this resource file's language.</comment>
   </data>
   <data name="ApplicationTitle" xml:space="preserve">
-    <value>Kalorilaskuri</value>
+    <value>Kalorilaskuri!</value>
   </data>
   <data name="AppBarButtonText" xml:space="preserve">
     <value>add</value>
   </data>
   <data name="AppBarMenuItemText" xml:space="preserve">
     <value>Menu Item</value>
+  </data>
+  <data name="Carbohydrates" xml:space="preserve">
+    <value>Hiilihydraatteja</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Unohda dada, laske ne!</value>
+  </data>
+  <data name="Dl" xml:space="preserve">
+    <value>dl</value>
+  </data>
+  <data name="Fat" xml:space="preserve">
+    <value>Rasvaa</value>
+  </data>
+  <data name="Fibre" xml:space="preserve">
+    <value>Kuitua</value>
+  </data>
+  <data name="Grams" xml:space="preserve">
+    <value>grammaa</value>
+  </data>
+  <data name="Includes" xml:space="preserve">
+    <value>100 g sisältää</value>
+  </data>
+  <data name="Ingredient" xml:space="preserve">
+    <value>Ruoka-aine</value>
+  </data>
+  <data name="Jar" xml:space="preserve">
+    <value>prk</value>
+  </data>
+  <data name="Pcs" xml:space="preserve">
+    <value>kpl</value>
+  </data>
+  <data name="Portion" xml:space="preserve">
+    <value>Annos</value>
+  </data>
+  <data name="Protein" xml:space="preserve">
+    <value>Proteiinia</value>
+  </data>
+  <data name="Ready" xml:space="preserve">
+    <value>Tallenna</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Hae</value>
+  </data>
+  <data name="SearchTip" xml:space="preserve">
+    <value>Kirjoita hakusana tähän</value>
+  </data>
+  <data name="Tbsp" xml:space="preserve">
+    <value>rkl</value>
+  </data>
+  <data name="TextBlockTotal" xml:space="preserve">
+    <value>Yht:</value>
+  </data>
+  <data name="Tsp" xml:space="preserve">
+    <value>tl</value>
+  </data>
+  <data name="Weights" xml:space="preserve">
+    <value>painaa</value>
+  </data>
+  <data name="AddNew" xml:space="preserve">
+    <value>Luo uusi ruoka-aine</value>
+  </data>
+  <data name="CaloriesPerPortion" xml:space="preserve">
+    <value>kcal / annos</value>
+  </data>
+  <data name="AddIngredient" xml:space="preserve">
+    <value>Lisää ruoka-aine päiväkirjaan</value>
+  </data>
+  <data name="Diary" xml:space="preserve">
+    <value>Päiväkirja</value>
+  </data>
+  <data name="Statistics" xml:space="preserve">
+    <value>Taulukot</value>
   </data>
 </root>

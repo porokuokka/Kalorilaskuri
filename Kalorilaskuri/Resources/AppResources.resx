@@ -126,12 +126,81 @@
     <comment>Controls the Language and ensures that the font for all elements in the RootFrame aligns with the app's language. Set to the language code of this resource file's language.</comment>
   </data>
   <data name="ApplicationTitle" xml:space="preserve">
-    <value>Calorie counter</value>
+    <value>CalorieCounter!</value>
   </data>
   <data name="AppBarButtonText" xml:space="preserve">
     <value>add</value>
   </data>
   <data name="AppBarMenuItemText" xml:space="preserve">
     <value>Menu Item</value>
+  </data>
+  <data name="Carbohydrates" xml:space="preserve">
+    <value>Carbohydrates</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Cut the nonsense, count them!</value>
+  </data>
+  <data name="Dl" xml:space="preserve">
+    <value>dl</value>
+  </data>
+  <data name="Fat" xml:space="preserve">
+    <value>Fat</value>
+  </data>
+  <data name="Fibre" xml:space="preserve">
+    <value>Fibre</value>
+  </data>
+  <data name="Grams" xml:space="preserve">
+    <value>grams</value>
+  </data>
+  <data name="Includes" xml:space="preserve">
+    <value>100 g includes</value>
+  </data>
+  <data name="Ingredient" xml:space="preserve">
+    <value>Ingredient</value>
+  </data>
+  <data name="Jar" xml:space="preserve">
+    <value>jar</value>
+  </data>
+  <data name="Pcs" xml:space="preserve">
+    <value>pcs</value>
+  </data>
+  <data name="Portion" xml:space="preserve">
+    <value>Portion</value>
+  </data>
+  <data name="Protein" xml:space="preserve">
+    <value>Protein</value>
+  </data>
+  <data name="Ready" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SearchTip" xml:space="preserve">
+    <value>Write your search criteria here</value>
+  </data>
+  <data name="Tbsp" xml:space="preserve">
+    <value>tbsp</value>
+  </data>
+  <data name="Tsp" xml:space="preserve">
+    <value>tsp</value>
+  </data>
+  <data name="Weights" xml:space="preserve">
+    <value>weights</value>
+  </data>
+  <data name="AddNew" xml:space="preserve">
+    <value>Create new ingredient</value>
+  </data>
+  <data name="CaloriesPerPortion" xml:space="preserve">
+    <value>kcal / portion</value>
+  </data>
+  <data name="AddIngredient" xml:space="preserve">
+    <value>Add ingredient to diary</value>
+  </data>
+  <data name="Diary" xml:space="preserve">
+    <value>Diary</value>
+  </data>
+  <data name="Statistics" xml:space="preserve">
+    <value>Statistics</value>
   </data>
 </root>
