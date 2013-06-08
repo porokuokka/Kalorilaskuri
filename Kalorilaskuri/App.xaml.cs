@@ -16,8 +16,8 @@ namespace Kalorilaskuri
 {
     public partial class App : Application
     {
-        public static MobileServiceClient MobileService = 
-            new MobileServiceClient("https://kalorilaskuri.azure-mobile.net/", "XEwGtjLRTwuzVwkZjTojpRtQeEcAfb79");
+        public static MobileServiceClient MobileService =
+            new MobileServiceClient("https://kalorilaskuri.azure-mobile.net/", "NYUGlWPFHuwfbkujJzEGFwRgkGCOhl75");
 
 
 
@@ -95,8 +95,8 @@ namespace Kalorilaskuri
             viewModel = new CalorieCounterViewModel(DBConnectionString);
 
             // Query the local database and load observable collections.
-            viewModel.LoadCollectionsFromDatabase(); 
-            
+            viewModel.LoadCollectionsFromDatabase();
+
         }
 
         // Code to execute when the application is launching (eg, from Start)

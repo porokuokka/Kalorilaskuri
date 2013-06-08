@@ -25,7 +25,9 @@
             <shell:ApplicationBarIconButton IconUri="/Images/feature.search.png" Text="hae" Click="ApplicationBarSearchButton_Click" />
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>
-
+    <phone:PhoneApplicationPage.Resources>
+        <local:StringToFloatConverter x:Key="FloatConverter"/>
+    </phone:PhoneApplicationPage.Resources>
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" attachedProperties:AttachedProperties.AutoSelectText="true">
@@ -48,6 +50,12 @@
 
             <DataTemplate x:Key="CustomHeaderTemplate">
                 <TextBlock ></TextBlock>
+            </DataTemplate>
+
+            <DataTemplate x:Name="PickerIntakeTemplate">
+                <StackPanel Orientation="Horizontal">
+                    <Border Background="{StaticResource PhoneBackgroundBrush}" Width="34" Height="34" />
+                </StackPanel>
             </DataTemplate>
         </Grid.Resources>
 
@@ -82,15 +90,16 @@
                     <TextBox x:Name="TextBoxHaku" HorizontalAlignment="Left" Height="71" TextWrapping="Wrap" Text="{Binding LocalizedResources.SearchTip, Source={StaticResource LocalizedStrings}}" TextChanged="TextBoxHaku_TextChanged" LostFocus="TextBoxHaku_LostFocus" VerticalAlignment="Bottom" Width="380" Margin="8,-25,0,594" KeyDown="TextBoxHaku_KeyDown"/>
                     <TextBlock x:Name="TextBlockHakusana" HorizontalAlignment="Left" Margin="8,40,0,0" TextWrapping="Wrap" Text="..." VerticalAlignment="Top" RenderTransformOrigin="0.488,0.444" Width="380"/>
                     <ScrollViewer Margin="20,80,44, 140" Width="350" Height="auto">
-                        <phone:LongListSelector x:Name="ListHakutulokset" IsGroupingEnabled="false" HideEmptyGroups ="false" Height="auto" Width="350" KeyDown="ListHakutulokset_KeyDown">
+                        <phone:LongListSelector x:Name="ListHakutulokset" Height="auto" Width="350" IsGroupingEnabled="false" HideEmptyGroups="False">
                             <phone:LongListSelector.ItemTemplate>
                                 <DataTemplate>
                                     <Border BorderBrush="{StaticResource PhoneAccentBrush}" CornerRadius="5,5,5,5" BorderThickness="2,2,2,2" Margin="5, 5, 5, 5">
-                                        <StackPanel x:Name="SearchResult" Background="{StaticResource PhoneAccentBrush}" KeyDown="SearchResult_KeyDown">
+                                        <StackPanel x:Name="SearchResult" Background="{StaticResource PhoneAccentBrush}">
                                             <TextBlock Text="{Binding Name}" Margin="5,5,5,0" TextWrapping="Wrap" FontWeight="Bold"/>
                                             <toolkit:ExpanderView x:Name="AddItemExpander" Collapsed="Expander_Collapsed" Expanded="Expander_Expanded" Margin="5,5,5,5" Header="+" FontSize="50">
                                                 <toolkit:ExpanderView.Items>
 
+                                                    <!--<local:Counter DataContext="{Binding}" HorizontalAlignment="Center"/>-->
                                                     <TextBlock Text="{Binding LocalizedResources.Includes, Source={StaticResource LocalizedStrings}}" TextWrapping="Wrap" FontSize="20"/>
 
                                                     <TextBlock x:Name="ShowCalories" Margin="5,5,5,5" TextWrapping="Wrap" FontSize="20">
@@ -113,12 +122,12 @@
                                                         <Run Text="{Binding LocalizedResources.Protein, Source={StaticResource LocalizedStrings}}" />
                                                     </TextBlock>
 
+
                                                     <TextBlock Margin="5,5,5,5" TextWrapping="Wrap" FontSize="20">
-                                                <Run Text="{Binding PortionCalories}" />
-                                                <Run Text=" kcal / "/>
-                                                <Run Text="{Binding Portion}" />
+                                                        <Run Text="{Binding PortionCalories}" />
+                                                        <Run Text=" kcal / "/>
+                                                        <Run Text="{Binding Portion}" />
                                                     </TextBlock>
-                                                    <Button Content="Add shit" Click="Button_Click_1" />
 
                                                 </toolkit:ExpanderView.Items>
                                             </toolkit:ExpanderView>
@@ -129,8 +138,8 @@
                         </phone:LongListSelector>
                     </ScrollViewer>
                 </Grid>
-
             </phone:PanoramaItem>
+
 
             <!--Luo raaka-aine-->
             <phone:PanoramaItem Foreground="{StaticResource PhoneForegroundBrush}" CacheMode="{x:Null}" Header="{Binding LocalizedResources.AddNew, Source={StaticResource LocalizedStrings}}" Width="630" Height="765" HeaderTemplate="{StaticResource PanoramaHeaderTemplate}">
@@ -151,11 +160,11 @@
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding LocalizedResources.Ingredient, Source={StaticResource LocalizedStrings}}" VerticalAlignment="Top" Height="25" Margin="1,-5,0,0" Width="180" Grid.ColumnSpan="2"/>
-                        <TextBox x:Name="TextBoxNimi" Text="{Binding Name, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" KeyDown="TextBoxNimi_KeyDown"  InputScope="Text" HorizontalAlignment="Left" GotFocus="TextBoxNimi_GotFocus" Height="72" TextWrapping="Wrap" VerticalAlignment="Top" Width="415" Margin="-9,20,0,0" Grid.ColumnSpan="2"/>
+                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding LocalizedResources.Ingredient, Source={StaticResource LocalizedStrings}}" VerticalAlignment="Top" Height="43" Margin="1,-5,0,0" Width="180" Grid.ColumnSpan="2"/>
+                        <TextBox x:Name="TextBoxNimi" Text="{Binding Name, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" KeyDown="TextBoxNimi_KeyDown"  InputScope="Text" HorizontalAlignment="Left" Height="72" TextWrapping="Wrap" VerticalAlignment="Top" Width="415" Margin="-9,20,0,0" Grid.ColumnSpan="2"/>
                         <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding LocalizedResources.Includes, Source={StaticResource LocalizedStrings}}" VerticalAlignment="Top" RenderTransformOrigin="0.512,1.111" Margin="6,90,0,0" Grid.ColumnSpan="2"/>
 
-                        <TextBox x:Name="TextBoxProtein" Text="{Binding Protein, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" Style="{StaticResource NumberTextBox}"  HorizontalAlignment="Left" Height="72" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" RenderTransformOrigin="0.465,2.653" Margin="11,115,0,0" Grid.ColumnSpan="2" />
+                        <TextBox x:Name="TextBoxProtein" Text="{Binding Protein, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true, Converter={StaticResource FloatConverter}}" Style="{StaticResource NumberTextBox}"  HorizontalAlignment="Left" Height="72" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" RenderTransformOrigin="0.465,2.653" Margin="11,115,0,0" Grid.ColumnSpan="2" />
                         <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding LocalizedResources.Protein, Source={StaticResource LocalizedStrings}}" VerticalAlignment="Top" RenderTransformOrigin="3.573,6.148" Margin="131,143,0,0" Grid.ColumnSpan="2"/>
 
                         <TextBox x:Name="TextBoxCarbohydrates" Text="{Binding Carbohydrates, Mode=TwoWay, NotifyOnValidationError=True, ValidatesOnExceptions=true}" Style="{StaticResource NumberTextBox}" HorizontalAlignment="Left" Height="72" TextWrapping="Wrap" VerticalAlignment="Top" Width="100" RenderTransformOrigin="0.465,2.653" Margin="11,178,0,0" Grid.ColumnSpan="2"/>
@@ -194,54 +203,48 @@
                 <phone:PanoramaItem.RenderTransform>
                     <TranslateTransform/>
                 </phone:PanoramaItem.RenderTransform>
-                <Grid Margin="0,-62,0,106">
-                    <toolkit:DatePicker x:Name="DatePickerDiary" HorizontalAlignment="Left" Height="73" VerticalAlignment="Top" Width="163" Margin="0,10,0,0"/>
-                    <TextBlock x:Name="TotalIntake" Text="{Binding Path=SelectedDay.Total}" Margin="270,10,0,0" TextWrapping="Wrap" FontSize="30" TextAlignment="Right" VerticalAlignment="Top" HorizontalAlignment="Left" Width="101" RenderTransformOrigin="2.19,0.37" Height="48"/>
 
-                    <ScrollViewer>
+                <Grid Margin="0,-62,0,106">
+                    <Grid x:Name="Diary">
+                        <toolkit:DatePicker x:Name="DatePickerDiary" ValueChanged="DatePickerDiary_ValueChanged" Margin="0,0,193,0"/>
+                        <TextBlock x:Name="TotalIntake" TextAlignment="Right" Text="{Binding Total}" Margin="215,12,0,0" TextWrapping="Wrap" FontSize="30" VerticalAlignment="Top" HorizontalAlignment="Left" Width="148" RenderTransformOrigin="2.19,0.37" Height="48"/>
+                    </Grid>
+                    <ScrollViewer Margin="0,80,0,0">
                         <phone:LongListSelector
-                        x:Name="LongListDiary" HorizontalAlignment="Left" Height="449" Margin="10,104,0,0" VerticalAlignment="Top" Width="383">
+                        x:Name="LongListDiary" HorizontalAlignment="Left" Height="483" VerticalAlignment="Top" Width="383">
                             <phone:LongListSelector.ItemTemplate>
                                 <DataTemplate>
                                     <Border BorderBrush="{StaticResource PhoneAccentBrush}" CornerRadius="5,5,5,5" BorderThickness="2,2,2,2" Margin="5, 5, 5, 5">
-                                        <StackPanel x:Name="StackPanelIntake" Background="{StaticResource PhoneAccentBrush}">
+                                        <StackPanel x:Name="StackPanelIntake" Hold="StackPanelIntake_Hold"  Background="{StaticResource PhoneAccentBrush}">
                                             <TextBlock Text="{Binding Path = IngredientOfIntake.Name}" Margin="5,5,5,0" TextWrapping="Wrap" FontWeight="Bold"/>
-                                            <toolkit:ExpanderView x:Name="ViewIntakeExpander" Margin="5,5,5,5" Header="+" FontSize="50">
-                                                <toolkit:ExpanderView.Items>
 
-                                                    <TextBlock Text="{Binding LocalizedResources.Includes, Source={StaticResource LocalizedStrings}}" TextWrapping="Wrap" FontSize="20"/>
-
-                                                    <TextBlock x:Name="ShowCalories" Margin="5,5,5,5" TextWrapping="Wrap" FontSize="20">
+                                            <TextBlock x:Name="ShowCalories" Margin="5,5,5,5" TextWrapping="Wrap" FontSize="20" HorizontalAlignment="Right">
                                                         <Run Text="{Binding Calories}" />
                                                         <Run Text="kcal" />
-                                                    </TextBlock>
+                                            </TextBlock>
 
-                                                    <TextBlock x:Name="ShowGrams" Margin="5,5,5,5" TextWrapping="Wrap" FontSize="20">
+                                            <TextBlock x:Name="ShowGrams" Margin="5,5,5,5" TextWrapping="Wrap" FontSize="20" HorizontalAlignment="Right">
                                                         <Run Text="{Binding Grams}" />
                                                         <Run Text=" g" />
-                                                    </TextBlock>
-
-                                                    <TextBlock Margin="5,5,5,5" TextWrapping="Wrap" FontSize="20">
-                                                <Run Text="{Binding Path = IngredientOfIntake.Calories}" />
-                                                <Run Text=" kcal / 100g"/>
-
-                                                    </TextBlock>
-                                                </toolkit:ExpanderView.Items>
+                                            </TextBlock>
+                                            <toolkit:ExpanderView x:Name="ExpanderDiary" FontSize="50" Expanded="ExpanderDiary_Expanded" Collapsed="ExpanderDiary_Collapsed" Header="+">
+                                            
                                             </toolkit:ExpanderView>
-                                        </StackPanel>
+                                            </StackPanel>
                                     </Border>
                                 </DataTemplate>
                             </phone:LongListSelector.ItemTemplate>
                         </phone:LongListSelector>
                     </ScrollViewer>
                 </Grid>
+
                 <!--Taulukot-->
             </phone:PanoramaItem>
             <phone:PanoramaItem CacheMode="{x:Null}" Header="{Binding LocalizedResources.Statistics, Source={StaticResource LocalizedStrings}}" HeaderTemplate="{StaticResource PanoramaHeaderTemplate}" Width="385">
                 <phone:PanoramaItem.RenderTransform>
                     <TranslateTransform/>
                 </phone:PanoramaItem.RenderTransform>
-                <Grid/>
+
             </phone:PanoramaItem>
 
         </phone:Panorama>

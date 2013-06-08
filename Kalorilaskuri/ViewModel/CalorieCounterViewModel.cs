@@ -6,6 +6,7 @@ using System.Linq;
 // Directive for the data model.
 using Kalorilaskuri.Model;
 using System;
+using System.Windows;
 
 
 namespace Kalorilaskuri.ViewModel
@@ -81,6 +82,40 @@ namespace Kalorilaskuri.ViewModel
             AllIntakes.Add(newIntake);
         }
 
+        /// <summary>
+        /// Adds an intake to viewmodel and db,
+        /// intake must contain ref to day, grams and calories
+        /// </summary>
+        /// <param name="newIntake"></param>
+        /// <param name="ing"></param>
+        public void AddIntake(Intake newIntake, Item ing)
+        {
+            Ingredient newIngredient = this.getIngredient(ing.Id);
+            if (newIngredient == null)
+            {
+                newIngredient = new Ingredient();
+                newIngredient.ItemId = ing.Id;
+                newIngredient.Name = ing.Name;
+                newIngredient.Calories = ing.Calories;
+                newIngredient.Fat = ing.Fat;
+                newIngredient.Carbohydrates = ing.Carbohydrates;
+                newIngredient.Protein = ing.Protein;
+                newIngredient.Portion = ing.Portion;
+                newIngredient.PortionCalories = ing.PortionCalories;
+                newIngredient.Portionweight = ing.Portionweight;
+                this.AddIngredient(newIngredient);
+            }
+
+            newIntake.IngredientOfIntake = newIngredient;
+            newIntake.DayIntake.Intakes.Add(newIntake); //voiko tää toimia???
+            newIntake.DayIntake.Total = newIntake.DayIntake.Intakes.Select(i => i.Calories).Sum();
+            MessageBox.Show("Total " + newIntake.DayIntake.Total);
+            newIngredient.Intakes.Add(newIntake);
+            AddIntake(newIntake);
+            MessageBox.Show("lisätään " + newIntake.IngredientOfIntake.Name);
+            //pitäis vielä päivättää dayslist
+        }
+
         private Ingredient ingredientToAdd;
 
         private bool IsSameIngredient(Ingredient ingredientToCompare)
@@ -125,7 +160,12 @@ namespace Kalorilaskuri.ViewModel
             IngredientsList.Add(newIngredient);
         }
 
-
+        /// <summary>
+        /// Checks if the dates match comparing two
+        /// different day-objects
+        /// </summary>
+        /// <param name="dayToCompare"></param>
+        /// <returns></returns>
         private bool IsSameDay(Day dayToCompare)
         {
             int comparison = dayToCompare.Date.Day.CompareTo(dateToAdd.Day);
@@ -135,12 +175,23 @@ namespace Kalorilaskuri.ViewModel
 
         private DateTime dateToAdd = new DateTime();
 
+        /// <summary>
+        /// Returns a day from db if date
+        /// is found
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns>null if not found</returns>
         public Day getDay(DateTime date)
         {
             dateToAdd = date;
             return DaysList.Find(IsSameDay);
         }
 
+        /// <summary>
+        /// Adds a new day to the database if date is not found
+        /// </summary>
+        /// <param name="newDay"></param>
+        /// <returns></returns>
         public Day AddDay(Day newDay)
         {
             dateToAdd = newDay.Date;
@@ -149,9 +200,10 @@ namespace Kalorilaskuri.ViewModel
             {
                 return find;
             }
-            
+
+            newDay.Total = newDay.Intakes.Select(i => i.Calories).Sum(); //toimiiko?
+            MessageBox.Show("Total: " + newDay.Total);
             calorieCounterDB.Days.InsertOnSubmit(newDay);
-            
             calorieCounterDB.SubmitChanges();
             
             DaysList.Add(newDay);
@@ -165,7 +217,6 @@ namespace Kalorilaskuri.ViewModel
             intakeForDelete.DayIntake.Intakes.Remove(intakeForDelete);
             AllIntakes.Remove(intakeForDelete);
             
-
             // Remove the to-do item from the data context.
             calorieCounterDB.Intakes.DeleteOnSubmit(intakeForDelete);
 

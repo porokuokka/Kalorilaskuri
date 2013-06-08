@@ -203,4 +203,7 @@
   <data name="Statistics" xml:space="preserve">
     <value>Statistics</value>
   </data>
+  <data name="AddToDiary" xml:space="preserve">
+    <value>Add to diary</value>
+  </data>
 </root>

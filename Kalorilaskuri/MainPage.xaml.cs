@@ -20,7 +20,7 @@ using Kalorilaskuri.ViewModel;
 namespace Kalorilaskuri
 {
     /// <summary>
-    /// Includes all ui
+    /// Includes all of UI elements except for counting
     /// </summary>
     public partial class MainPage : PhoneApplicationPage
     {
@@ -30,18 +30,47 @@ namespace Kalorilaskuri
         private Item add;
         //private List<Item> hakutulokset;
         private DateTime selectedDate;
-        private Day SelectedDay;
+        //private Day SelectedDay;
 
         private MobileServiceCollectionView<Item> items;
         private MobileServiceCollectionView<Item> search;
         private IMobileServiceTable<Item> itemTable = App.MobileService.GetTable<Item>();
+
+
+        public static Item Selected
+        {
+            get;
+            set;
+        }
+
+        public static Day SelectedDay
+        {
+            get;
+            set;
+        }
 
         // Constructor
         public MainPage()
         {
             InitializeComponent();
             Loaded += MainPage_Loaded;
+            items = itemTable.ToCollectionView();
+            MessageBox.Show("Itemtable: " + itemTable.ToString());
+            add = new Item();
+            GridAdd.DataContext = add;
+            
+            //Get today as default
+            selectedDate = new DateTime();
+            selectedDate = DateTime.Today;
+            SelectedDay = new Day();
+            SelectedDay.Date = selectedDate;
+            SelectedDay = App.ViewModel.AddDay(SelectedDay);
+   
+            if (SelectedDay.Intakes != null) LongListDiary.ItemsSource = SelectedDay.Intakes;
 
+            Diary.DataContext = SelectedDay;
+            
+            MessageBox.Show("Itemcount" + items.Count);
             // Sample code to localize the ApplicationBar
             //BuildLocalizedApplicationBar();
         }
@@ -55,18 +84,6 @@ namespace Kalorilaskuri
         /// <param name="e"></param>
         void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            items = itemTable.ToCollectionView();
-            add = new Item();
-            GridAdd.DataContext = add;
-            
-            //Get today as default
-            selectedDate = new DateTime();
-            selectedDate = DateTime.Today;
-            SelectedDay = new Day();
-            SelectedDay.Date = selectedDate;
-            SelectedDay = App.ViewModel.AddDay(SelectedDay);
-            if (SelectedDay.Intakes != null) LongListDiary.ItemsSource = SelectedDay.Intakes;
-            MessageBox.Show(SelectedDay.Date.ToString());
             //ListPickerDiary.ItemsSource = App.ViewModel.DaysList;
         }
 
@@ -122,21 +139,27 @@ namespace Kalorilaskuri
 
         /// <summary>
         /// Searches from mobileservice table for items containing
-        /// searchcriterias
+        /// searchcriteria
         /// </summary>
         /// <param name="hakusana"></param>
         private void Haku(string hakusana)
         {
-            
-           TextBlockHakusana.Text = hakusana;
-
-           search = itemTable.Where(item => item.Name.Contains(hakusana))
+           TextBlockHakusana.Text = hakusana + " ...";
+           MessageBox.Show(hakusana);
+           items = null;
+           String test = (items == null).ToString();
+           MessageBox.Show("Items should be null" + test);
+           items = App.MobileService.GetTable<Item>().Where(item => item.Name.Contains(hakusana))
                .ToCollectionView();
-
-            ListHakutulokset.ItemsSource = search;
-
-            Progressbar.IsVisible = false;
-            //hae hakusanalla molemmista kannoista ja lyö longlistselectoriin tms
+           
+           test = (items == null).ToString();
+           MessageBox.Show(test);
+           ListHakutulokset.ItemsSource = null;
+           ListHakutulokset.ItemsSource = items;
+           test = (ListHakutulokset.ItemsSource == null).ToString();
+           MessageBox.Show("itemssource is null: " + test);
+           MessageBox.Show("Itemcount" + items.Count);
+           Progressbar.IsVisible = false;
         }
 
 
@@ -162,15 +185,12 @@ namespace Kalorilaskuri
         private void TextBoxHaku_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             Progressbar.Text = "Haetaan...";
+
             Progressbar.IsVisible = true;
 
             if (e.Key == System.Windows.Input.Key.Enter)
             {
-                
-                //hakutulokset = new List<Item>();
-                
                 TextBox text = (TextBox)sender;
-                
                 this.Focus();
                 Haku(text.Text); 
             }
@@ -200,11 +220,6 @@ namespace Kalorilaskuri
                 Progressbar.IsVisible = true;
                 InsertItem(add); 
                 }
-        }
-
-        private void TextBoxNimi_GotFocus(object sender, RoutedEventArgs e)
-        {
-    
         }
 
         private bool val = true;
@@ -241,16 +256,6 @@ namespace Kalorilaskuri
             }
         }
 
-        private void SearchResult_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-     
-        }
-
-        private void ListHakutulokset_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            
-        }
-
         private void Expander_Expanded(object sender, RoutedEventArgs e)
         {
             ExpanderView ex = (ExpanderView)sender;
@@ -264,69 +269,113 @@ namespace Kalorilaskuri
 
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void ButtonAddIntake_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Painoit shittiä");
-
-            ///Etsitään item paikallisesta kannasta ja muodostetaan uusi jos sitä ei ole aiemmin lisätty
-            Item selectedItem = (Item)ListHakutulokset.SelectedItem;
-            Ingredient newIngredient = App.ViewModel.getIngredient(selectedItem.Id);
-            if (newIngredient != null) MessageBox.Show("Löytyi listasta: " + newIngredient.Name);
-            if (newIngredient == null)
-            {
-                newIngredient = new Ingredient();
-                newIngredient.ItemId = selectedItem.Id;
-                newIngredient.Name = selectedItem.Name;
-                newIngredient.Calories = selectedItem.Calories;
-                newIngredient.Fat = selectedItem.Fat;
-                newIngredient.Carbohydrates = selectedItem.Carbohydrates;
-                newIngredient.Protein = selectedItem.Protein;
-                newIngredient.Portion = selectedItem.Portion;
-                newIngredient.PortionCalories = selectedItem.PortionCalories;
-                newIngredient.Portionweight = selectedItem.Portionweight;
-                App.ViewModel.AddIngredient(newIngredient);
-            }
-
-            //Tehdään uusi intake
-            Intake newIntake = new Intake();
-            newIntake.Grams = 300;
-            newIntake.IngredientOfIntake = newIngredient;
-            MessageBox.Show("Intaken ingredientin nimi: " + newIntake.IngredientOfIntake.Name);
-            newIntake.DayIntake = SelectedDay;
-            
-            SelectedDay.Intakes.Add(newIntake);
-            newIngredient.Intakes.Add(newIntake);
-            
-            
-            App.ViewModel.AddIntake(newIntake);
-
-            LongListDiary.ItemsSource = SelectedDay.Intakes;
-            
-            //Lisätään intake kantaan
-            
-           /* newIntake._ingredientId = getIngredient.IngredientId;
-            newIntake._dayId = SelectedDay.Id;*/
-
-
-            //MessageBox.Show("Oisit ny lisäämässä" + newItem.Name);
-            
+            ApplicationBarSearchButton_Click(sender, e);
         }
 
+        #region Diary
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DatePickerDiary_ValueChanged(object sender, DateTimeValueChangedEventArgs e)
+        {
+            changeDay((DateTime)e.NewDateTime);
+        }
 
+        private void changeDay(DateTime date)
+        {
+            SelectedDay = new Day();
+            SelectedDay.Date = date;
+            SelectedDay = App.ViewModel.AddDay(SelectedDay);
+            
+            if (SelectedDay.Intakes != null) LongListDiary.ItemsSource = SelectedDay.Intakes;
+            Diary.DataContext = SelectedDay;
+        }
+
+        private void StackPanelIntake_Hold(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            StackPanel intk = (StackPanel)sender;
+            Intake remove = (Intake)intk.DataContext;
+            MessageBox.Show("Remove intake " + remove.IngredientOfIntake.Name);
+        }
+
+        private void ExpanderDiary_Expanded(object sender, RoutedEventArgs e)
+        {
+            ExpanderView exd = (ExpanderView)sender;
+            exd.Header = "-";
+        }
+
+        private void ExpanderDiary_Collapsed(object sender, RoutedEventArgs e)
+        {
+            ExpanderView exd = (ExpanderView)sender;
+            exd.Header = "+";
+        }
+
+        /*
+       private void Button_Click_1(object sender, RoutedEventArgs e)
+       {
+           MessageBox.Show("Painoit shittiä");
+
+           ///Etsitään item paikallisesta kannasta ja muodostetaan uusi jos sitä ei ole aiemmin lisätty
+           Item selectedItem = (Item)ListHakutulokset.SelectedItem;
+           Ingredient newIngredient = App.ViewModel.getIngredient(selectedItem.Id);
+           if (newIngredient != null) MessageBox.Show("Löytyi listasta: " + newIngredient.Name);
+           if (newIngredient == null)
+           {
+               newIngredient = new Ingredient();
+               newIngredient.ItemId = selectedItem.Id;
+               newIngredient.Name = selectedItem.Name;
+               newIngredient.Calories = selectedItem.Calories;
+               newIngredient.Fat = selectedItem.Fat;
+               newIngredient.Carbohydrates = selectedItem.Carbohydrates;
+               newIngredient.Protein = selectedItem.Protein;
+               newIngredient.Portion = selectedItem.Portion;
+               newIngredient.PortionCalories = selectedItem.PortionCalories;
+               newIngredient.Portionweight = selectedItem.Portionweight;
+               App.ViewModel.AddIngredient(newIngredient);
+           }
+
+           //Tehdään uusi intake
+           Intake newIntake = new Intake();
+           newIntake.Grams = 300;
+           newIntake.IngredientOfIntake = newIngredient;
+           MessageBox.Show("Intaken ingredientin nimi: " + newIntake.IngredientOfIntake.Name);
+           newIntake.DayIntake = SelectedDay;
+            
+           SelectedDay.Intakes.Add(newIntake);
+           newIngredient.Intakes.Add(newIntake);
+            
+            
+           App.ViewModel.AddIntake(newIntake);
+
+           LongListDiary.ItemsSource = SelectedDay.Intakes;
+            
+           //Lisätään intake kantaan
+            
+          /* newIntake._ingredientId = getIngredient.IngredientId;
+           newIntake._dayId = SelectedDay.Id;*/
+
+
+        //MessageBox.Show("Oisit ny lisäämässä" + newItem.Name);
+
+        //}
+
+
+        /*
         private void DiaryListSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             selectedDate = (DateTime)sender;
             SelectedDay.Date = selectedDate;
             SelectedDay = App.ViewModel.AddDay(SelectedDay);
             
-                LongListDiary.ItemsSource = SelectedDay.Intakes;
-        }
-
-        private void ButtonAddIntake_Click(object sender, RoutedEventArgs e)
-        {
-            ApplicationBarSearchButton_Click(sender, e);
-        }
-
+            LongListDiary.ItemsSource = SelectedDay.Intakes;
+            TotalIntake.Text = SelectedDay.Total.ToString();
+            MessageBox.Show(SelectedDay.Total.ToString());
+        }*/
+        #endregion
 
     }
   

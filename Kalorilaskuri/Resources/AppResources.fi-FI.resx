@@ -206,4 +206,7 @@
   <data name="Statistics" xml:space="preserve">
     <value>Taulukot</value>
   </data>
+  <data name="AddToDiary" xml:space="preserve">
+    <value>Lisää päiväkirjaan</value>
+  </data>
 </root>
