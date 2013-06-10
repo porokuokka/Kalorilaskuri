@@ -145,20 +145,12 @@ namespace Kalorilaskuri
         private void Haku(string hakusana)
         {
            TextBlockHakusana.Text = hakusana + " ...";
-           MessageBox.Show(hakusana);
-           items = null;
-           String test = (items == null).ToString();
-           MessageBox.Show("Items should be null" + test);
-           items = App.MobileService.GetTable<Item>().Where(item => item.Name.Contains(hakusana))
+         
+           search = App.MobileService.GetTable<Item>().Where(item => item.Name.Contains(hakusana))
                .ToCollectionView();
            
-           test = (items == null).ToString();
-           MessageBox.Show(test);
-           ListHakutulokset.ItemsSource = null;
-           ListHakutulokset.ItemsSource = items;
-           test = (ListHakutulokset.ItemsSource == null).ToString();
-           MessageBox.Show("itemssource is null: " + test);
-           MessageBox.Show("Itemcount" + items.Count);
+           ListHakutulokset.ItemsSource = search;
+           
            Progressbar.IsVisible = false;
         }
 
@@ -290,8 +282,9 @@ namespace Kalorilaskuri
             SelectedDay = new Day();
             SelectedDay.Date = date;
             SelectedDay = App.ViewModel.AddDay(SelectedDay);
-            
+            MessageBox.Show("Haettu selectedDay");
             if (SelectedDay.Intakes != null) LongListDiary.ItemsSource = SelectedDay.Intakes;
+            MessageBox.Show("Haettu selectedDay");
             Diary.DataContext = SelectedDay;
         }
 

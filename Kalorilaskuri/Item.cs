@@ -28,11 +28,11 @@ namespace Kalorilaskuri
 
         #region properties
 
-        public int Id { get; set; } 
+        public int Id { get; set; }
 
         
         private float protein;
-
+        [JsonProperty(PropertyName = "Protein")]
         public float Protein
         {
             get { return protein; }
@@ -49,6 +49,7 @@ namespace Kalorilaskuri
         }
 
         private float carbohydrates;
+        [JsonProperty(PropertyName = "Carbohydrates")]
         public float Carbohydrates
         {
             get { return carbohydrates; }
@@ -65,6 +66,7 @@ namespace Kalorilaskuri
         }
 
         private float fat;
+        [JsonProperty(PropertyName = "Fat")]
         public float Fat
         {
             get { return fat; }
@@ -81,6 +83,7 @@ namespace Kalorilaskuri
         }
 
         private float fibre;
+        [JsonProperty(PropertyName = "Fibre")]
         public float Fibre
         {
             get { return fibre; }
@@ -97,6 +100,7 @@ namespace Kalorilaskuri
         }
 
         private int calories;
+        [JsonProperty(PropertyName = "Calories")]
         public int Calories
         {
             get { return calories; }
@@ -114,6 +118,7 @@ namespace Kalorilaskuri
         }
 
         private float portionCalories;
+        [JsonProperty(PropertyName = "PortionCalories")]
         public float PortionCalories
         {
             get { return portionCalories; }
@@ -131,6 +136,7 @@ namespace Kalorilaskuri
         }
 
         private string name;
+        [JsonProperty(PropertyName = "Name")]
         public string Name
         {
             get { return name; }
@@ -149,6 +155,7 @@ namespace Kalorilaskuri
         }
 
         private string portion;
+        [JsonProperty(PropertyName = "Portion")]
         public string Portion
         {
             get { return portion; }
@@ -167,6 +174,7 @@ namespace Kalorilaskuri
         }
 
         private int portionweight;
+        [JsonProperty(PropertyName = "Portionweight")]
         public int Portionweight
         {
             get { return portionweight; }
@@ -187,15 +195,6 @@ namespace Kalorilaskuri
         #endregion
 
         public Item() { }
-        public Item(string name, int calories, float protein, float carbohydrates, float fat, float fibre)
-        {
-            Name = name;
-            Calories = calories;
-            Protein = protein;
-            Carbohydrates = carbohydrates;
-            Fat = fat;
-            Fibre = fibre;
-        }
 
         public override string ToString()
         {

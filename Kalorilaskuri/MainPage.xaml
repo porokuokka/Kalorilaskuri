@@ -94,7 +94,7 @@
                             <phone:LongListSelector.ItemTemplate>
                                 <DataTemplate>
                                     <Border BorderBrush="{StaticResource PhoneAccentBrush}" CornerRadius="5,5,5,5" BorderThickness="2,2,2,2" Margin="5, 5, 5, 5">
-                                        <StackPanel x:Name="SearchResult" Background="{StaticResource PhoneAccentBrush}">
+                                        <StackPanel x:Name="SearchResult">
                                             <TextBlock Text="{Binding Name}" Margin="5,5,5,0" TextWrapping="Wrap" FontWeight="Bold"/>
                                             <toolkit:ExpanderView x:Name="AddItemExpander" Collapsed="Expander_Collapsed" Expanded="Expander_Expanded" Margin="5,5,5,5" Header="+" FontSize="50">
                                                 <toolkit:ExpanderView.Items>

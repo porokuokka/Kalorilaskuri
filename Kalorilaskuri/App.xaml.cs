@@ -17,7 +17,7 @@ namespace Kalorilaskuri
     public partial class App : Application
     {
         public static MobileServiceClient MobileService =
-            new MobileServiceClient("https://kalorilaskuri.azure-mobile.net/", "NYUGlWPFHuwfbkujJzEGFwRgkGCOhl75");
+            new MobileServiceClient("https://kalorilaskuri.azure-mobile.net/", "XEwGtjLRTwuzVwkZjTojpRtQeEcAfb79");
 
 
 
